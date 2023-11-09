@@ -1,6 +1,6 @@
 import yaml
 import sqlalchemy 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, MetaData
 
 class DatabaseConnector:
     def __init__(self, credentials_file_path) -> None:
@@ -30,12 +30,14 @@ class DatabaseConnector:
             print(f"Error: Missing key in credentials - {e}")
         except Exception as e:
             print(f"Error initializing database engine: {e}")
-
-# Example usage:
-file_path = '/Users/sousabraham/project2/multinational-retail-data-centralisation/db_creds.yaml'
-db_connector = DatabaseConnector(file_path)
-
-if hasattr(db_connector, 'credentials') and hasattr(db_connector, 'engine'):
-    print("Database engine initialized successfully.")
-else:
-    print("Failed to initialize database engine.")
+    
+    def list_db_tables(self):
+        try:
+            metadata = MetaData(bind=self.engine)
+            metadata.reflect()
+            table_names = metadata.tables.keys()
+            return table_names
+        except Exception as e:
+            print(f"Error listing database tables: {e}")
+            return []
+        
