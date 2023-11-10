@@ -1,5 +1,6 @@
 import yaml
 import sqlalchemy 
+import psycopg2
 from sqlalchemy import create_engine, MetaData
 
 class DatabaseConnector:
