@@ -34,11 +34,21 @@ class DatabaseConnector:
     
     def list_db_tables(self):
         try:
-            metadata = MetaData(bind=self.engine)
-            metadata.reflect()
+            metadata = MetaData()
+            metadata.reflect(bind=self.engine)
             table_names = metadata.tables.keys()
             return table_names
         except Exception as e:
             print(f"Error listing database tables: {e}")
             return []
-    
+        
+    def upload_to_db(self, df, table_name):
+        try:
+            with self.engine.connect() as connection:
+                connection.execute("COMMIT")
+                connection.execute("SET TRANSACTION READ WRITE")
+                df.to_sql(name=table_name, con=connection, index=False, if_exists='replace')
+                print(f"Data uploaded to table {table_name} successfully.")
+        except Exception as e:
+            print(f"Error uploading data to table {table_name}: {e}")
+
