@@ -12,3 +12,11 @@ class DataExtractor:
         except Exception as e:
             print(f"Error reading data from table {table_name}: {e}")
             return []    
+    
+    def read_rds_table(self, table_name):
+        try: 
+            if table_name not in self.list_db_tables():
+                print(f"Error: Table '{table_name}' does not exist.")
+                return None
+            
+            query = f"SELECT * FROM (ta)"
