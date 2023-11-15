@@ -1,3 +1,4 @@
-db_creds.yaml
+db_creds_local.yaml
+db_creds_remote.yaml
 script.py
 sandbox.ipynb
