@@ -1,7 +1,6 @@
 import pandas as pd
-import psycopg2
-import sqlalchemy 
-import tabula as tb
+import tabula
+from sqlalchemy import text 
 
 class DataExtractor:
     def __init__(self, db_engine):
@@ -17,7 +16,7 @@ class DataExtractor:
 
             # Read data from the specified table
             with self.db_engine.connect() as connection:
-                query = f"SELECT * FROM {table_name}"
+                query = text(f"SELECT * FROM {table_name}")
                 result = connection.execute(query)
                 data = result.fetchall()
 
@@ -28,4 +27,9 @@ class DataExtractor:
         except Exception as e:
             print(f"Error reading data from table {table_name}: {e}")
             return pd.DataFrame()    
+    
+    def retrieve_pdf_data(self, link):
+        pdf_table = tabula.read_pdf(link, pages='all', multiple_tables=True)
+        pdf_df = pd.concat(pdf_table)
+        return pdf_df 
     

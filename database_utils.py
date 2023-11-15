@@ -44,7 +44,14 @@ class DatabaseConnector:
         
     def upload_to_db(self, df, table_name):
         try:
-            with self.engine.connect() as connection:
+            # Create a new engine with a specific isolation level
+            engine_with_transaction = create_engine(
+                self.engine.url,
+                isolation_level="AUTOCOMMIT"  # Choose the appropriate isolation level
+            )
+
+            with engine_with_transaction.connect() as connection:
+                # Upload the DataFrame to the specified table
                 df.to_sql(name=table_name, con=connection, index=False, if_exists='replace')
                 print(f"Data uploaded to table {table_name} successfully.")
         except Exception as e:
