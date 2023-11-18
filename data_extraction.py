@@ -1,11 +1,14 @@
 import pandas as pd
 import tabula
+import requests 
 from sqlalchemy import text 
 
 class DataExtractor:
     def __init__(self, db_engine):
         self.db_engine = db_engine
-
+        self.base_url = "https://aqj7u5id95.execute-api.eu-west-1.amazonaws.com/prod/" 
+        self.header = {'x-api-key': 'yFBQbwXe9J3sd6zWVAMrK6lcxxr0q1lr2PT6DDMX'}
+         
     def read_rds_table(self, db_connector, table_name):
         try:
             # Check if the specified table exists in the database
@@ -33,3 +36,54 @@ class DataExtractor:
         pdf_df = pd.concat(pdf_table)
         return pdf_df 
     
+    def list_stores(self, endpoint):
+        url = self.base_url + endpoint
+        response = requests.get(url, headers=self.header)
+        print(f'API Response: {response.text}')
+
+        if response.status_code == 200:
+            try:
+                data = response.json()
+                number_of_stores = data.get('number_stores')
+                return number_of_stores
+            except Exception as e:
+                print(f"Error parsing JSON: {e}")
+                return None
+        else:
+            print(f"Error: {response.status_code}")
+            return None
+    
+    def retrieve_stores_data(self, retrieve_store_endpoint, store_numbers):
+        all_stores = []
+
+        for store_number in store_numbers:
+            endpoint = retrieve_store_endpoint.format(store_number=store_number)
+            store_data = self.retrieve_single_store_data(endpoint)
+
+            if store_data is not None:
+                all_stores.append(store_data)
+            else:
+                print(f'Error reaching')
+        if all_stores:
+            df = pd.DataFrame(all_stores)
+            return df
+        else:
+            return None
+        
+    def retrieve_single_store_data(self, endpoint):
+        response = requests.get(endpoint, headers=self.header)
+        if response.status_code == 200:
+            return response.json()
+        else:
+            print(f"Error for store {endpoint}: {response.status_code}")
+            return None
+        # response = requests.get(endpoint, headers=self.header)
+        # print(f'API RESPONSE: {response.text}')
+        # if response.status_code == 200:
+        #     stores_data = response.json()
+        #     # print(response.json())
+        #     df = pd.DataFrame([stores_data])
+        #     return df
+        # else:
+        #     print(f"Error: {response.status_code}")
+        #     return None
