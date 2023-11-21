@@ -37,7 +37,7 @@ class DataCleaning:
             pdf_df.dropna()
             # remove any characters in card number
             pdf_df['card_number'] = pdf_df['card_number'].apply(lambda x: str(x) if x is not None and str(x).isdigit() else pd.NA)
-            # # remove null values and non conforming values
+            # remove null values and non conforming values
             pdf_df['expiry_date'] = pd.to_datetime(pdf_df['expiry_date'], errors='coerce',format='%m/%y')
             pdf_df['expiry_date'] = pdf_df['expiry_date'].dt.strftime('%m/%y')
             pdf_df['card_provider'] = pdf_df['card_provider'].str.upper()
@@ -79,3 +79,52 @@ class DataCleaning:
         except Exception as e:
             print(f"Error cleaning user data: {e}")
             return pd.DataFrame()
+        
+    def convert_product_weights(self, dataframe):
+        if 'weight' not in dataframe.columns:
+            raise ValueError("The 'weight' column does not exist in the DataFrame.")
+        # Clean up weights and convert to float
+        dataframe['weight'] = dataframe['weight'].apply(self.convert_to_kg)
+        return dataframe
+    
+    def convert_to_kg(self, weight):
+        if isinstance(weight, (int, float)):
+            return float(weight) 
+        
+        match = re.match(r'(\d*\.?\d+)\s*(kg|g|ml)?', str(weight))
+
+        if match:
+            value, unit = match.groups()
+
+            # Convert to kg based on the units
+            if unit == 'g':
+                return float(value) / 1000  # Convert grams to kilograms
+            elif unit == 'ml':
+                # Assuming 1 ml is roughly equivalent to 1 g
+                return float(value) / 1000
+            elif unit == 'kg':
+                return float(value)
+            else:
+                return float(value)  # Assume already in kg if no unit specified
+        else:
+            return None  
+        
+    def clean_products_data(self, dataframe):
+        dataframe['product_name'] = dataframe['product_name'].str.title()
+        dataframe['weight'] = dataframe['weight'].round(2)
+        dataframe['product_price'] = dataframe['product_price'].str.replace('£', '')
+        dataframe['product_price'] = dataframe['product_price'].apply(lambda x: pd.to_numeric(x, errors='coerce'))
+        dataframe['date_added'] = pd.to_datetime(dataframe['date_added'], errors='coerce', format='%Y-%m-%d')
+        dataframe.dropna(inplace=True)
+        dataframe.drop(labels=['Unnamed: 0'], axis=1, inplace=True)
+        dataframe = dataframe[['product_name', 'product_price', 'weight', 
+                               'category', 'EAN', 'date_added', 
+                               'removed', 'product_code', 'uuid']]
+        return dataframe
+    
+    def clean_orders_data(self, orders_data_df):
+        orders_data_df.drop(labels=['last_name'], axis=1, inplace=True)
+        orders_data_df.drop(labels=['level_0'], axis=1, inplace=True)
+        orders_data_df.drop(labels=['1'], axis=1, inplace=True)
+        orders_data_df.dropna(inplace=True)
+        return orders_data_df
