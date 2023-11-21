@@ -86,7 +86,7 @@ class DataExtractor:
         try:
             bucket, key = s3_address.replace("s3://", "").split("/", 1)
             file_content = self.s3_client.get_object(Bucket=bucket, Key=key)['Body'].read().decode('utf-8')
-            return pd.read_csv(StringIO(file_content))
+            return pd.read_json(StringIO(file_content))
 
         except Exception as e:
             print(f"Error extracting data from S3: {e}")

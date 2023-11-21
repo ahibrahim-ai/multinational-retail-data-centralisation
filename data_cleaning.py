@@ -122,9 +122,23 @@ class DataCleaning:
                                'removed', 'product_code', 'uuid']]
         return dataframe
     
-    def clean_orders_data(self, orders_data_df):
-        orders_data_df.drop(labels=['last_name'], axis=1, inplace=True)
-        orders_data_df.drop(labels=['level_0'], axis=1, inplace=True)
-        orders_data_df.drop(labels=['1'], axis=1, inplace=True)
-        orders_data_df.dropna(inplace=True)
-        return orders_data_df
+    def clean_orders_data(self, df):
+        df.drop(labels=['last_name'], axis=1, inplace=True)
+        df.drop(labels=['level_0'], axis=1, inplace=True)
+        df.drop(labels=['1'], axis=1, inplace=True)
+        df.dropna(inplace=True)
+        return df
+    
+    def clean_date_time(self, df):
+        df['date'] = df['year'] + '-' + df['month'] + '-' + df['day']
+        df['date'] = df['date'].astype(str)
+        df['timestamp'] = df['timestamp'].astype(str)
+        df['timestamp'] = df['date'] + ' ' + df['timestamp']
+        #df = df[['date', 'timestamp', 'time_period', 'date_uuid']]
+        df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce', format='%Y-%m-%d %H:%M:%S')
+        bins = [-1, 5, 12, 18, 21, 24]
+        labels = ['Late_Hours', 'Morning', 'Afternoon', 'Evening', 'Late_Hours']
+        df['time_period'] = pd.cut(df['timestamp'].dt.hour, bins=bins, labels=labels, ordered= False, right=False)
+        df.drop(columns=['year', 'month', 'day', 'date'], inplace=True)
+        df.dropna()
+        return df
