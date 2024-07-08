@@ -13,25 +13,25 @@ In today's data-driven business environment, having access to accurate and timel
 
 ## Objectives
 
-**Data Centralisation:** Aggregate sales data from various sources into a single, centralised database.
-**Single Source of Truth:** Establish the database as the definitive source for all sales metrics.
-**Accessibility:** Ensure that team members can easily access and query the database for up-to-date sales data.
-**Scalability:** Design the system to handle large volumes of data and accommodate future growth.
+#### Data Centralisation: Aggregate sales data from various sources into a single, centralised database.
+#### Single Source of Truth: Establish the database as the definitive source for all sales metrics.
+#### Accessibility: Ensure that team members can easily access and query the database for up-to-date sales data.
+#### Scalability: Design the system to handle large volumes of data and accommodate future growth.
 
 ## Key Features
 
-**Data Integration:** Seamless integration of sales data from multiple sources.
-**Database Management:** Efficient storage and management of sales data.
-**Data Querying:** Capacity to query and retrieve real-time sales metrics.
-**Data Analytics:** Support for advanced data analytics and reporting.
+#### Data Integration: Seamless integration of sales data from multiple sources.
+#### Database Management: Efficient storage and management of sales data.
+#### Data Querying: Capacity to query and retrieve real-time sales metrics.
+#### Data Analytics: Support for advanced data analytics and reporting.
 
 ## Technologies Used
 
-**Database Management System (DBMS):** Centralised database for storing sales data.
-**ETL Tools:** Extract, Transform, Load processes to integrate data from various sources.
-**SQL:** Structured Query Language for querying the database.
-**Data Warehousing:** Techniques for efficient data storage and retrieval.
-**Python:** Programming language for data manipulation and analysis.
+#### Database Management System (DBMS): Centralised database for storing sales data.
+#### ETL Tools: Extract, Transform, Load processes to integrate data from various sources.
+#### SQL: Structured Query Language for querying the database.
+#### Data Warehousing: Techniques for efficient data storage and retrieval.
+#### Python: Programming language for data manipulation and analysis.
 
 ## License
 
